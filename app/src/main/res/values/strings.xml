@@ -3,4 +3,7 @@
     <string name="hello_message">Hello World!</string>
     <string name="button_message">I\'m a button</string>
     <string name="hinttext">Write something here</string>
+    <string name="checkbox_message">CheckBox</string>
+    <string name="switch_message">Switch</string>
+    <string name="radiobutton_message">Option</string>
 </resources>
