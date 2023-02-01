@@ -50,12 +50,12 @@
         android:text="@string/radiobutton_message"
         ></RadioButton>
     
-    <ImageView
-        android:id="@+id/action_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/logoalgonquin"
-        ></ImageView>
+<!--    <ImageView-->
+<!--        android:id="@+id/action_image"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:src="@drawable/logoalgonquin"-->
+<!--        ></ImageView>-->
     
     <ImageButton
         android:id="@+id/myimagebutton"
