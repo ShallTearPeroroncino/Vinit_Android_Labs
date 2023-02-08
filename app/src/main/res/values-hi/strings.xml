@@ -3,4 +3,7 @@
     <string name="app_name">Vinit_Android_Labs</string>
     <string name="hello_message">Namaste Duniya</string>
     <string name="button_message">Me Button hu</string>
+    <string name="button">Button ek</string>
+    <string name="button2">Button do</string>
+    <string name="button3">Button tin</string>
 </resources>
