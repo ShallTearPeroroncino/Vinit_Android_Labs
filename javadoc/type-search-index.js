@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"algonquin.cst2335.soma0036.databinding","l":"ActivityMainBinding"},{"l":"All Classes","url":"allclasses-index.html"},{"p":"algonquin.cst2335.soma0036","l":"BuildConfig"},{"p":"algonquin.cst2335.soma0036","l":"MainActivity"}]
