@@ -30,9 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
         variableBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(variableBinding.getRoot());
-
-
-
 //       TextView mytext = findViewById(R.id.textview);
 //       Button btn = findViewById(R.id.mybutton);
 //       EditText myedit = findViewById(R.id.myedittext);
