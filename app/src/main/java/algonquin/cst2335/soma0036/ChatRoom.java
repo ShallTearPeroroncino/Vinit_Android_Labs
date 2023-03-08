@@ -33,13 +33,10 @@ public class ChatRoom extends AppCompatActivity {
 
         binding = ActivityChatRoomBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-
         ChatViewModel cvm = new ViewModelProvider(this).get(ChatViewModel.class);
         messages = cvm.messages;
 
         binding.RecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         binding.send.setOnClickListener(click ->{
             String txt = binding.edittxt.getText().toString();
             messages.add(txt);
@@ -50,7 +47,6 @@ public class ChatRoom extends AppCompatActivity {
         });
 
         binding.RecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         binding.RecyclerView.setAdapter(myAdapter = new RecyclerView.Adapter<MyRowHolder>() {
             @NonNull
             @Override
@@ -71,7 +67,6 @@ public class ChatRoom extends AppCompatActivity {
             public void onBindViewHolder(@NonNull MyRowHolder holder, int position) {
                 String messageOnthisRow = messages.get(position);
                 holder.messageText.setText(messageOnthisRow);
-
                 SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd-MMM-yyyy hh-mm-ss a");
                 String currentDateandTime = sdf.format(new Date());
                 holder.timeText.setText(currentDateandTime);
