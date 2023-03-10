@@ -33,17 +33,27 @@ public class ChatRoom extends AppCompatActivity {
 
         binding = ActivityChatRoomBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd-MMM-yyyy hh-mm-ss a");
+        String currentDateandTime = sdf.format(new Date());
         ChatViewModel cvm = new ViewModelProvider(this).get(ChatViewModel.class);
         messages = cvm.messages;
 
         binding.RecyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.send.setOnClickListener(click ->{
+            ChatMessage chatMessage = new ChatMessage(binding.edittxt.getText().toString(),currentDateandTime,true);
             String txt = binding.edittxt.getText().toString();
             messages.add(txt);
             myAdapter.notifyItemInserted(messages.size()-1);
-//            myAdapter.notifyItemRemoved(messages.size()-1);
             binding.edittxt.setText("");
-//            myAdapter.notifyDataSetChanged();
+        });
+
+        binding.receive.setOnClickListener(click ->{
+            ChatMessage chatMessage = new ChatMessage(binding.edittxt.getText().toString(),currentDateandTime,false);
+            String txt = binding.edittxt.getText().toString();
+            messages.add(txt);
+            myAdapter.notifyItemInserted(messages.size()-1);
+            binding.edittxt.setText("");
         });
 
         binding.RecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -67,8 +77,6 @@ public class ChatRoom extends AppCompatActivity {
             public void onBindViewHolder(@NonNull MyRowHolder holder, int position) {
                 String messageOnthisRow = messages.get(position);
                 holder.messageText.setText(messageOnthisRow);
-                SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd-MMM-yyyy hh-mm-ss a");
-                String currentDateandTime = sdf.format(new Date());
                 holder.timeText.setText(currentDateandTime);
             }
 
@@ -79,6 +87,9 @@ public class ChatRoom extends AppCompatActivity {
 
             @Override
             public int getItemViewType(int position){
+                ChatMessage chatMessage =
+                chatMessage = messages.;
+                if(position)
                 return position % 2;
             }
         });
