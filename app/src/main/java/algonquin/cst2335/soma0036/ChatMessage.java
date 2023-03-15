@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ChatMessage {
     ArrayList<ChatMessage> messages;
-    String message;
+    public String message;
     String timeSent;
     boolean isSentButton;
 
