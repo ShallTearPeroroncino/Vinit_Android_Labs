@@ -14,11 +14,6 @@ public class ChatMessage {
         this.isSentButton = sent;
     }
 
-    public ChatMessage() {
-
-    }
-
-
     public String getMessage() {
         return message;
     }
