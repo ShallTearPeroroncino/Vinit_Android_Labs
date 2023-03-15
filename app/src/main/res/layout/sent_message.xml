@@ -9,7 +9,7 @@
         android:textColor="@color/black"
         android:id="@+id/message"
         android:textAlignment="center"
-        android:layout_width="223dp"
+        android:layout_width="225dp"
         android:layout_height="35dp"
         android:text="Message"
         app:layout_constraintEnd_toStartOf="@+id/time"
