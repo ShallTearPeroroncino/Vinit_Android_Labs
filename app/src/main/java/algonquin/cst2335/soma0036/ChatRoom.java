@@ -32,62 +32,107 @@ import algonquin.cst2335.soma0036.databinding.ReceiveMessageBinding;
 import algonquin.cst2335.soma0036.databinding.SentMessageBinding;
 public class ChatRoom extends AppCompatActivity {
     ChatMessageDAO mDao;
-//    List<ChatMessage> allMessages = mDao.getAllMessages();
     ActivityChatRoomBinding binding;
-    ArrayList<ChatMessage> messages;
+    ArrayList<ChatMessage> messages = new ArrayList<>();
     ChatViewModel chatModel;
     ChatMessage chat = new ChatMessage("", "", false);
     SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd-MMM-yyyy hh-mm-ss a");
     String currentDateandTime = sdf.format(new Date());
     private RecyclerView.Adapter myAdapter;
 
+    public void addContent(Boolean isTrue ){
+        currentDateandTime = sdf.format(new Date());
+        chat = new ChatMessage(binding.edittxt.getText().toString(), currentDateandTime, isTrue);
+        messages.add(chat);
+        myAdapter.notifyItemInserted(messages.size() - 1);
+        binding.edittxt.setText("");
+    };
+
+    private void insertMessage(ChatMessage newMessage){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mDao.insertMessage(newMessage);
+            }
+        }).start();
+    }
+
+    private void loadMessages() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<ChatMessage> loadedMessages = (ArrayList<ChatMessage>) mDao.getAllMessages();
+                messages.addAll( mDao.getAllMessages() );
+                chatModel.messages.postValue(loadedMessages);
+                myAdapter.notifyDataSetChanged();
+            }
+        }).start();
+    }
+
+    private void deleteMessages(ChatMessage messageToDelete){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mDao.deleteMessage(messageToDelete);
+            }
+        }).start();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        MessageDatabase db = MessageDatabase.getInstance(this);
+        mDao = db.chatMessageDAO();
         super.onCreate(savedInstanceState);
 
-        binding = ActivityChatRoomBinding.inflate(getLayoutInflater());
         chatModel = new ViewModelProvider(this).get(ChatViewModel.class);
         messages = chatModel.messages.getValue();
-        MessageDatabase db = Room.databaseBuilder(getApplicationContext(), MessageDatabase.class, "database-name").build();
-        mDao = db.cmDAO();
-
-        setContentView(binding.getRoot());
-        if (messages == null) {
-            chatModel.messages.setValue(messages = new ArrayList<ChatMessage>());
-            Executor thread = Executors.newSingleThreadExecutor();
-            thread.execute(() ->
-            {
-                mDao.insertMessage(chat);
-            });
+        if(messages == null){
+            chatModel.messages.postValue(messages = new ArrayList<ChatMessage>());
         }
+
+        binding = ActivityChatRoomBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        binding.send.setOnClickListener(click -> {
+         addContent(true);
+        });
+
+        binding.receive.setOnClickListener(click -> {
+           addContent(false);
+        });
+        loadMessages();
+//        chatModel = new ViewModelProvider(this).get(ChatViewModel.class);
+//        messages = chatModel.messages.getValue();
+//        MessageDatabase db = Room.databaseBuilder(getApplicationContext(), MessageDatabase.class, "database-name").build();
+//        mDao = db.cmDAO();
+//
+//        setContentView(binding.getRoot());
+//        if (messages == null) {
+//            chatModel.messages.setValue(messages = new ArrayList<ChatMessage>());
+//            Executor thread = Executors.newSingleThreadExecutor();
+//            thread.execute(() ->
+//            {
+//                mDao.insertMessage(chat);
+//            });
+//        }
 
 //        ChatViewModel cvm = new ViewModelProvider(this).get(ChatViewModel.class);
 //
 //        binding.RecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        binding.send.setOnClickListener(click -> {
-            chat = new ChatMessage(binding.edittxt.getText().toString(), currentDateandTime, true);
-            messages.add(chat);
-            myAdapter.notifyItemInserted(messages.size() - 1);
-            binding.edittxt.setText("");
-            Executor thread = Executors.newSingleThreadExecutor();
-            thread.execute(() ->
-            {
-                mDao.insertMessage(chat);
-            });
-        });
 
-        binding.receive.setOnClickListener(click -> {
-            chat = new ChatMessage(binding.edittxt.getText().toString(), currentDateandTime, false);
-            messages.add(chat);
-            myAdapter.notifyItemInserted(messages.size() - 1);
-            binding.edittxt.setText("");
-            Executor thread = Executors.newSingleThreadExecutor();
-            thread.execute(() ->
-            {
-                mDao.insertMessage(chat);
-            });
-        });
+
+//        binding.receive.setOnClickListener(click -> {
+//            chat = new ChatMessage(binding.edittxt.getText().toString(), currentDateandTime, false);
+//            messages.add(chat);
+//            myAdapter.notifyItemInserted(messages.size() - 1);
+//            binding.edittxt.setText("");
+//            Executor thread = Executors.newSingleThreadExecutor();
+//            thread.execute(() ->
+//            {
+//                mDao.insertMessage(chat);
+//            });
+//        });
 
         binding.RecyclerView.setAdapter(myAdapter = new RecyclerView.Adapter<MyRowHolder>() {
             @NonNull
@@ -95,23 +140,28 @@ public class ChatRoom extends AppCompatActivity {
             public MyRowHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 if (viewType == 0) {
 //                    SentMessageBinding binding = SentMessageBinding.inflate(getLayoutInflater(), parent, false);
-                    SentMessageBinding sent_binding = SentMessageBinding.inflate(getLayoutInflater(),parent,false);
-                    View root = sent_binding.getRoot();
-                    return new MyRowHolder(root);
+                    SentMessageBinding sendBinding = SentMessageBinding.inflate(getLayoutInflater());
+                    return new MyRowHolder(sendBinding.getRoot());
 
                 } else {
-                    ReceiveMessageBinding receive_binding = ReceiveMessageBinding.inflate(getLayoutInflater(),parent,true);
+//                    ReceiveMessageBinding receive_binding = ReceiveMessageBinding.inflate(getLayoutInflater(),parent,true);
 //                    ReceiveMessageBinding binding = ReceiveMessageBinding.inflate(getLayoutInflater(), parent, false);
-                    View root = receive_binding.getRoot();
-                    return new MyRowHolder(root);
+                    ReceiveMessageBinding receiveBinding = ReceiveMessageBinding.inflate(getLayoutInflater());
+                    return new MyRowHolder(receiveBinding.getRoot());
+//                    View root = receive_binding.getRoot();
+//                    return new MyRowHolder(root);
                 }
             }
 
             @Override
             public void onBindViewHolder(@NonNull MyRowHolder holder, int position) {
-                ChatMessage chatmessge = messages.get(position);
-                holder.messageText.setText(chatmessge.getMessage());
+                holder.messageText.setText("");
+                ChatMessage obj = messages.get(position);
+                holder.messageText.setText(obj.getMessage());
                 holder.timeText.setText(currentDateandTime);
+//                ChatMessage chatmessge = messages.get(position);
+//                holder.messageText.setText(chatmessge.getMessage());
+//                holder.timeText.setText(currentDateandTime);
             }
 
             @Override
@@ -122,21 +172,24 @@ public class ChatRoom extends AppCompatActivity {
             @Override
             public int getItemViewType(int position) {
 //                chat.messages.get(position);
-                ChatMessage chat = messages.get(position);
-                if (chat.isSentButton) {
+                ChatMessage chatmessage = messages.get(position);
+                if (chatmessage.isSentButton) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         });
+        binding.RecyclerView.setAdapter(myAdapter);
+        loadMessages();
+        binding.RecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
    class MyRowHolder extends RecyclerView.ViewHolder {
         TextView messageText;
         TextView timeText;
 
-        public MyRowHolder(View itemView) {
+        public MyRowHolder(@NonNull View itemView) {
             super(itemView);
 
             itemView.setOnClickListener(clk ->  {

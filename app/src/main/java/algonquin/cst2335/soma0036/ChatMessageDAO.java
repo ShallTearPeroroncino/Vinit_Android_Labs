@@ -12,7 +12,7 @@ public interface ChatMessageDAO {
     @Insert
     public long insertMessage(ChatMessage m);
     @Query("Select * from ChatMessage")
-    List<ChatMessage> getAllMessages();
+    public List<ChatMessage> getAllMessages();
 
     @Delete
     void deleteMessage(ChatMessage m);
